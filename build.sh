@@ -13,9 +13,17 @@ trap "{ export EXT=$?; acbuild --debug end && exit $EXT; }" EXIT
 acbuild --debug set-name jamesbrink/postfix
 acbuild --debug dep add quay.io/coreos/alpine-sh
 acbuild --debug run -- apk update
+acbuild --debug run -- apk add supervisor
 acbuild --debug run -- apk add postfix
-acbuild --debug copy ./aci-assets/etc/postfix /postfix
+acbuild --debug run -- apk add rsyslog
+acbuild --debug run -- apk add bash
+acbuild --debug run -- rm -rf /etc/postfix
+acbuild --debug copy ./aci-assets/etc/postfix/ /etc/postfix/
+acbuild --debug copy ./aci-assets/etc/supervisor/conf.d/ /etc/supervisor/conf.d/
+acbuild --debug copy ./aci-assets/usr/local/bin/ /usr/local/bin/
 acbuild --debug port add smtp tcp 25
-acbuild --debug	set-exec -- /usr/sbin/postfix -c /etc/postfix
+acbuild --debug run -- touch /var/log/maillog
+acbuild --debug run -- chmod 640 /var/log/maillog
+acbuild --debug	set-exec -- /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 acbuild --debug write --overwrite postfix-latest-linux-amd64.aci
 
