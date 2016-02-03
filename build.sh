@@ -14,6 +14,7 @@ acbuild --debug set-name jamesbrink/postfix
 acbuild --debug dep add quay.io/coreos/alpine-sh
 acbuild --debug run -- apk update
 acbuild --debug run -- apk add postfix
+acbuild --debug copy ./aci-assets/etc/postfix /postfix
 acbuild --debug port add smtp tcp 25
 acbuild --debug	set-exec -- /usr/sbin/postfix -c /etc/postfix
 acbuild --debug write --overwrite postfix-latest-linux-amd64.aci
